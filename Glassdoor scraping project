@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def gather(page):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'}
+    headers = {'User-Agent': ''}
     url = f'https://www.glassdoor.com/Explore/browse-companies.htm?overall_rating_low=3&page={page}&locId=615&locType=M&locName=New%20York%20City,%20NY%20Area'
     r = requests.get(url, headers)
     soup = BeautifulSoup(r.content, 'lxml')
