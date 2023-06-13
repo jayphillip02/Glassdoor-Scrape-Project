@@ -2,35 +2,71 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
-
+# Function to scrape data from a specific page on Glassdoor
 def gather(page):
+    # Paste User-Agent in parentheses on other side of colon
     headers = {'User-Agent': ''}
+    
+    # URL of the page to scrape, with page number parameter left open as variable within curly brackets
     url = f'https://www.glassdoor.com/Explore/browse-companies.htm?overall_rating_low=3&page={page}&locId=615&locType=M&locName=New%20York%20City,%20NY%20Area'
+    
+    # Send a GET request to the URL and store the response in 'r'
     r = requests.get(url, headers)
+    
+    # Create a BeautifulSoup object to parse the HTML content of the response
     soup = BeautifulSoup(r.content, 'lxml')
+    
+    # Return the parsed soup object
     return soup
 
+# Scrape data from the first page
 scraped = gather(1)
 
+# Function to extract specific data from the parsed soup object
 def change(soup):
+    # Find all div elements with a certain class 
     search = soup.find_all('div', class_='mt-0 mb-std p-std css-1ax1pfu css-errlgf')
+    
+    # Iterate over each div element found
     for query in search:
+        # Extract the name from the h2 tag
         name = query.find('h2').text
+        
+        # Extract the industry 
         industry = query.find('div', class_='col-lg-4 mt-sm mt-sm-std order-4').text
+        
+        # Extract the description 
         description = query.find('div', class_='col-12 my-0 mt-sm mt-sm-std order-5').text
+        
+        # Create a dictionary with the extracted data
         company = {
-                'name': name,
-                'industry': industry,
-                'description': description
+            'name': name,
+            'industry': industry,
+            'description': description
         }
+        
+        # Add info from dictionary to our list
         companylist.append(company)
 
+# Create an empty list to store the scraped data
 companylist = []
+
+# Loop to scrape data from a single page
 for s in range(1):
     print(f'Loading page, {s}')
+    
+    # Scrape data from the page
     scraped = gather(1)
+    
+    # Extract specific data from the scraped page
     change(scraped)
 
+# Create a DataFrame from the scraped data
 df = pd.DataFrame(companylist)
+
+# Print the DataFrame
 print(df)
+
+# Save the DataFrame as a CSV file
 df.to_csv('Top_NY_Companies.csv')
+
